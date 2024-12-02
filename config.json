@@ -1,10 +1,22 @@
 {
+<<<<<<< HEAD
   "last_outbound_api_call_time": "2024-12-01T17:59:24.116795",
+=======
+  "last_outbound_api_call_time": "2024-12-01T23:01:51.207624",
+>>>>>>> 549797cc20c7174bc44d5d84b801ae1c08edd7ed
   "outbound_api_call_throttle": "10",
   "user_data": {
       "user_agent": "https://github.com/robertbrod/aoc by robbrod93@gmail.com"
   },
   "year": 2024,
+<<<<<<< HEAD
   "day": 1,
   "part": 2
 }
+=======
+  "day": 2,
+  "part": 2,
+  "display_leaderboard": false,
+  "private_leaderboard_url": "https://adventofcode.com/2024/leaderboard/private/view/1331446"
+}
+>>>>>>> 549797cc20c7174bc44d5d84b801ae1c08edd7ed

@@ -2,27 +2,27 @@ import json
 from pathlib import Path
 from datetime import datetime
 
-STATE_FILE = Path("config.json")
+CONFIG_FILE = Path("config.json")
 
-def load_state():
-    if STATE_FILE.exists():
-        with open(STATE_FILE, "r") as file:
+def load():
+    if CONFIG_FILE.exists():
+        with open(CONFIG_FILE, "r") as file:
             return json.load(file)
         
     return {}
 
-def save_state(data):
-    with open(STATE_FILE, "w") as file:
+def save(data):
+    with open(CONFIG_FILE, "w") as file:
         json.dump(data, file, indent = 4)
         
-def get_state(key):
-    state = load_state()
+def get_config(key):
+    state = load()
     return state.get(key)
 
-def set_state(key, value):
-    state = load_state()
+def set_config(key, value):
+    state = load()
     state[key] = value
-    save_state(state)
+    save(state)
     
 def update_last_outbound_api_call_time():
-    set_state("last_outbound_api_call_time", datetime.now().isoformat())
+    set_config("last_outbound_api_call_time", datetime.now().isoformat())
