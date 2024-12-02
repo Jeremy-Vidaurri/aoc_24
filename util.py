@@ -23,9 +23,9 @@ def create_input_dirs(year):
             print(f"Skipping directory creation: {path}")
             
 def cache_input(data, year, day):
-    with open(f"{year}/{day}/{year}_{day}_input.txt", "w") as file:
+    with open(f"{year}/{day}/input.txt", "w") as file:
         file.write(data)
         
 def fetch_input(year, day):
-    with open(f"{year}/{day}/{year}_{day}_input.txt", "r") as file:
+    with open(f"{year}/{day}/input.txt", "r") as file:
         return file.read()

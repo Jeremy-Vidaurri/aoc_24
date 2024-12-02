@@ -1,45 +1,41 @@
 # Advent of Code 2024 - Day 1
 
 def solve_part_one(input):
-    left_list = []
-    right_list = []
-    
+    left = []
+    right = []
+
     for line in input:
-        parts = line.split("   ")
-        left_list.append(parts[0])
-        right_list.append(parts[1])
-        
-    left_list.sort()
-    right_list.sort()
-    
-    total_diff = 0
-    
-    for index, loc_id in enumerate(left_list):
-        total_diff += abs(int(left_list[index]) - int(right_list[index]))
-        
-    return total_diff
+        split = line.split(" ")
+        left.append(int(split[0]))
+        right.append(int(split[-1]))
+
+    left.sort()
+    right.sort()
+
+    dist = 0
+    for i in range(len(left)):
+        dist += abs(left[i] - right[i])
+
+    return dist
 
 def solve_part_two(input):
-    left_list = []
-    right_list = []
-    
+    left = []
+    right = []
+
     for line in input:
-        parts = line.split("   ")
-        left_list.append(parts[0])
-        right_list.append(parts[1])
-        
-    hash_map = {}
-    
-    for loc_id in right_list:
-        if loc_id in hash_map:
-            hash_map[loc_id] = hash_map.get(loc_id, 0) + 1
-        else:
-            hash_map[loc_id] = 1
-            
-    total_similarity_score = 0        
-    
-    for loc_id in left_list:
-        if loc_id in hash_map:
-            total_similarity_score += int(loc_id) * int(hash_map.get(loc_id))
-    
-    return total_similarity_score
+        split = line.split(" ")
+        left.append(int(split[0]))
+        right.append(int(split[-1]))
+
+    set_left = set(left)
+    dict_right = {}
+
+    for val in right:
+        dict_right[val] = dict_right.get(val, 0) + 1
+
+    similarity = 0
+    for val in set_left:
+        if val in dict_right:
+            similarity += val * dict_right[val]
+
+    return similarity
