@@ -1,49 +1,43 @@
 # Advent of Code 2024 - Day 2
 
+def is_safe(report, dir):
+    for i in range(len(report) - 1):
+        if (int(report[i+1]) - int(report[i]) > 3 or int(report[i+1]) - int(report[i]) <= 0) and dir == 1:
+            return False
+        if (int(report[i+1]) - int(report[i]) < -3 or int(report[i+1]) - int(report[i]) >= 0) and dir == -1:
+            return False
+    return True
+
 def solve_part_one(input):
-    total_safe = 0
-    
+    safe_total = 0
+
     for line in input:
-        parts = list(map(int, line.split()))
-        pointer = 0
-        last_num = -1
-        is_increasing = None
-        safe = True
-        
-        while pointer < len(parts) and safe == True:
-            if last_num == -1:
-                last_num = parts[pointer]
-                pointer += 1
-                continue
-            elif parts[pointer] == last_num:
-                safe = False
-                continue
-                
-            if is_increasing == None:
-                if abs(parts[pointer] - last_num > 3):
-                    safe = False
-                    break
-                elif parts[pointer] > last_num:
-                    is_increasing = True
-                else:
-                    is_increasing = False
-                    
-            if (parts[pointer] - last_num > 3 and is_increasing == True) or (parts[pointer] < last_num and is_increasing == True):
-                safe = False
-                break
-            elif (parts[pointer] - last_num < -3 and is_increasing == False) or (parts[pointer] > last_num and is_increasing == False):
-                safe = False
-                break
-            
-            last_num = parts[pointer]
-            pointer += 1
-                
-        if safe == True:
-            total_safe += 1       
-        
-    return total_safe
+        line_split = line.split(' ')
+        dir = 1 if int(line_split[0]) < int(line_split[1]) else -1 if int(line_split[0]) > int(line_split[1]) else 0
+
+        # Even line
+        if dir == 0:
+            continue
+
+        safe_total += 1 if is_safe(line_split, dir) else 0
+
+    return safe_total
+
+def brute_force(report):
+    for i in range(len(report)):
+        tmp = report.pop(i)
+        dir = 1 if int(report[0]) < int(report[1]) else -1 if int(report[0]) > int(report[1]) else 0
+        if (dir != 0 and is_safe(report, dir)):
+            return True
+        report.insert(i, tmp)
+    return False
 
 def solve_part_two(input):
-    total_safe = 0     
+    safe_total = 0
+    for line in input:
+        line_split = line.split(' ')
+
+        safe_total += 1 if brute_force(line_split) else 0
+    return safe_total
+
         
-    return total_safe
