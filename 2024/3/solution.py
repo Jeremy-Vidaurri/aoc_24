@@ -41,24 +41,16 @@ def solve_part_two(input):
     currentMode = 'do'
 
     for (start, end), string in queue_mult:
-        print(start)
         while (queue_do and start > queue_do[0][0]) or (queue_dont and start > queue_dont[0][0]):
             if queue_do and start > queue_do[0][0]:
-                print("DOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO")
-                print(start, queue_do[0][0])
                 queue_do.pop(0)
                 currentMode = 'do'
             if queue_dont and start > queue_dont[0][0]:
-                print("NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO")
-                print(start, queue_dont[0][0])
                 queue_dont.pop(0)
                 currentMode = 'dont'
         if currentMode == 'do':
             #print("MULT")
             #print(start,end)
             sum += multiply(string)
-            queue_mult.pop(0)
-        else:
-            print(string, "HAHAHAHAH")
-    
+
     return sum
