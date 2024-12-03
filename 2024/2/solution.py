@@ -1,5 +1,4 @@
 # Advent of Code 2024 - Day 2
-
 def is_safe(report, dir):
     for i in range(len(report) - 1):
         if (int(report[i+1]) - int(report[i]) > 3 or int(report[i+1]) - int(report[i]) <= 0) and dir == 1:
