@@ -31,8 +31,9 @@ def solve_part_two(input):
     for i in range(1,len(input) - 1):
         for j in range(1, len(input[i]) - 1):
             if (input[i-1][j-1] == 'M' and input[i][j] == 'A' and input[i+1][j+1] == 'S' or \
-                input[i-1][j+1] == 'S' and input[i][j] == 'A' and input[i+1][j+1] == 'M') and \
+                input[i-1][j-1] == 'S' and input[i][j] == 'A' and input[i+1][j+1] == 'M') and \
                 (input[i-1][j+1] == 'M' and input[i][j] == 'A' and input[i+1][j-1] == 'S' or \
                 input[i-1][j+1] == 'S' and input[i][j] == 'A' and input[i+1][j-1] == 'M'):
+                print(i,j)
                 total +=1 
     return total
