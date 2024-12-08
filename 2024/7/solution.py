@@ -14,13 +14,16 @@ def brute_force(target, arr, cur_total):
 def brute_force_concat(target, arr, cur_total):
     if len(arr) == 0:
         return target == cur_total
-
+    if cur_total >= target:
+        return False
     num = int(arr.pop(0))
-    add = brute_force_concat(target, copy.deepcopy(arr), cur_total+num)
-    mul = brute_force_concat(target, copy.deepcopy(arr), cur_total*num)
+    if brute_force_concat(target, copy.deepcopy(arr), cur_total+num):
+        return True
+    if brute_force_concat(target, copy.deepcopy(arr), cur_total*num):
+        return True
     combined = int(str(cur_total) + str(num))
-    concat = brute_force_concat(target, copy.deepcopy(arr), combined)
-    return add or mul or concat
+    if brute_force_concat(target, copy.deepcopy(arr), combined):
+        return True
 
 def solve_part_one(input):
     lines = [line for line in input]
