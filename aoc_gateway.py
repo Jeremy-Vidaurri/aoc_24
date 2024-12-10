@@ -35,10 +35,10 @@ def fetch_input(year: str, day: str) -> str:
     print(f"Fetching input data for day {day} ({year})...")
     
     if os.path.exists(f"{year}/{day}/{year}_{day}_input.txt"):
-        raise Exception(f"Input data for day {day} ({year}) already cached.")
+        raise DataAlreadyCached(f"Input data for day {day} ({year}) already cached.")
     
     if minutes_since_last_outbound_call() < int(config_manager.get_config("outbound_api_call_throttle")):
-        raise Exception(f"Cancelling AoC endpoint request; the last request was too recent.")
+        raise APIRequestThrottled(f"Cancelling AoC endpoint request; the last request was too recent.")
     
     url = f"https://adventofcode.com/{year}/day/{day}/input"
 
