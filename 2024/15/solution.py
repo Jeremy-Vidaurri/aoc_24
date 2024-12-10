@@ -104,13 +104,15 @@ def can_push_boxes_2(grid, deltaRow, deltaCol, row, col):
             elif grid[row][col] == '#':
                 return False, row, set([col])
     cols_to_check = set()
-
-    if row + deltaRow == '[':
+    boxes = set()
+    if grid[row + deltaRow][col] == '[':
         cols_to_check.add(col)
         cols_to_check.add(col + 1)
+        boxes.add((row + deltaRow, col))
     else:
         cols_to_check.add(col)
         cols_to_check.add(col - 1)
+        boxes.add((row + deltaRow, col-1))
 
     while True:
         row += deltaRow
@@ -121,48 +123,31 @@ def can_push_boxes_2(grid, deltaRow, deltaCol, row, col):
                 return False, -1, set()
             elif grid[row][check_column] =='[':
                 cols_to_check.add(check_column + 1)
+                boxes.add((row + deltaRow, col))
             elif grid[row][check_column] ==']':
                 cols_to_check.add(check_column - 1)
+                boxes.add((row + deltaRow, col-1))
             else:
                 good += 1
         if good == len(cols_to_check):
             #print(row)
             return True, row, cols_to_check
 
-def move_multiple_boxes(grid, starting_row, ending_row, startingCol):
-    #print(starting_row, ending_row)
-    if ending_row > starting_row:
-        delta = 1
-    else:
-        delta = -1
+def move_multiple_boxes(grid, boxes: set, emptyRow, deltaRow):
+    diff = emptyRow - max(box, key=lambda box: box[1]) 
+    print(diff)
+    for box in boxes:
+        boxRow, boxCol = box
+        grid[boxRow][boxCol] = '.'
+        grid[boxRow][boxCol+1] = '.' # Boxes tracks left side
 
-    tmp_grid = deepcopy(grid)
 
-    columns = set()
-    columns.add(startingCol)
-    if grid[starting_row][startingCol] =='[':
-        columns.add(startingCol + 1)
-    elif grid[starting_row][startingCol] ==']':
-        columns.add(startingCol - 1)
-    moved = set()
-    for row in range(starting_row, ending_row, delta):
-        tmp = columns.copy()
-        for col in tmp:
-            #print(grid[row][col], row, col)
-            if grid[row][col] == '[' or grid[row][col] == ']':
-                tmp_grid[row + delta][col] = grid[row][col]
-                #print(tmp_grid[row + delta][col])
-                if (row - delta, col) not in moved:
-                    #print(row, col, delta, starting_row)
-                    tmp_grid[row][col] = '.'
-
-            moved.add((row, col))
-            if grid[row + delta][col] =='[':
-                columns.add(col + 1)
-            elif grid[row + delta][col] ==']':
-                columns.add(col - 1)
-        
-    return deepcopy(tmp_grid)
+    # New idea:
+    #   - Keep track of the left side of the boxes that need to be moved (will gather in can_push_boxes)
+    #   - Keep track of the row that the last box will be inserted into
+    #   - Simply copy/paste boxes into the appropriate row
+    #       - Beforehand, replace their positions with . so we don't override afterwards
+    pass
 
 def simulate_movement_2(grid, move, row, col):
     # Translate the move into useful directions
