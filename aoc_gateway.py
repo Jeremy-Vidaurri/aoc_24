@@ -4,8 +4,34 @@ import config_manager
 from models import Participant
 from datetime import datetime
 from bs4 import BeautifulSoup
+from exceptions import DataAlreadyCached
+from exceptions import APIRequestThrottled
 
-def fetch_input(year, day):
+@staticmethod
+def fetch_input(year: str, day: str) -> str:
+    """
+    Writes puzzle input data to disk. Saves to `year/day/year_day_input.txt`
+
+    Args:
+        data (str): response from AoC API request
+        year (str): puzzle year
+        day (str): puzzle day
+
+    Returns:
+        Response from AoC API
+
+    Raises:
+        DataAlreadyCached
+            If the input data has already been cached on disk, we do not want to make an API call
+            
+        APIRequestThrottled
+            If we have made an API request for puzzle input too recently, we do not want to make an API call.
+            This throttle value is set in `config.json` 
+            
+        HTTPError
+            We got a 4xx or 5xx response from AoC API
+    """
+    
     print(f"Fetching input data for day {day} ({year})...")
     
     if os.path.exists(f"{year}/{day}/{year}_{day}_input.txt"):
