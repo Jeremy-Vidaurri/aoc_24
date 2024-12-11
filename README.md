@@ -23,16 +23,18 @@ Run `pip install -r requirements.txt` inside repo dir
 aoc/
 ├── 2024/                   # Solutions for the year 2024
 │   ├── 1/                  # Day 1
-│   │   ├── input.txt       # Puzzle input for Day 1
+│   │   ├── input.txt       # Puzzle input for Day 1 (Not committed to repo)
 │   │   └── solution.py     # Solution script for Day 1 (both parts)
 │   ├── 2/                  # Day 2
-│   │   ├── input.txt       # Puzzle input for Day 2
+│   │   ├── input.txt       # Puzzle input for Day 2 (Not committed to repo)
 │   │   └── solution.py     # Solution script for Day 2 (both parts)
 ├── aoc_gateway.py          # Script for fetching inputs and submitting solutions
 ├── config_manager.py       # Configuration manager for interacting with JSON config file on disk
 ├── config.json             # JSON configuration file (e.g., throttling, user data, year/day/part)
+├── leaderboard.txt         # Cached private leaderboard
 ├── main.py                 # Entry point
 ├── util.py                 # Utility functions shared across scripts
+├── requirements.txt        # Used for installing dependencies
 └── README.md               # Documentation (you’re here!)
 ```
 
