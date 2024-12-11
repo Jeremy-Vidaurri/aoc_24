@@ -1,7 +1,7 @@
 # Advent of Code 2024 - Day 22
 
 def solve_part_one(input):
-    return 0
+    return None
 
 def solve_part_two(input):
-    return 0
+    return None
