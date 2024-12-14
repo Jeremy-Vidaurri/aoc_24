@@ -27,6 +27,7 @@ def parse_input(input):
             sublist.append([int(prize_X), int(prize_Y)])
         else:
             arr.append(sublist)
+    arr.append(sublist)
     return arr
 
 def try_solution(game):
