@@ -1,5 +1,6 @@
 # Advent of Code 2024 - Day 13
 import re
+import numpy as np
 
 def parse_input(input):
     arr = []
@@ -28,39 +29,28 @@ def parse_input(input):
             arr.append(sublist)
     return arr
 
-
-# FOR LATER:
-#   * Switch to using a dict
-#       - Have the key be a string with runningX:runningY
-#       - This will help reduce space greatly 
-
-def backtrack(game, runningX, runningY, cache, tokens):
-    (aX, aY), (bX, bY), (prizeX, prizeY) = game
-    if runningX > prizeX or runningY > prizeY:
-        return -1 # Not possible with this configuration
-    if runningX == prizeX and runningY == prizeY:
-        return 1
-    if cache[runningX][runningY] != float('inf'):
-        return cache[runningX][runningY]
-    
-    pressA = backtrack(game, runningX + aX, runningY + aY, cache, tokens + 1)
-    pressB = backtrack(game, runningX + bX, runningY + bY, cache, tokens + 3)
-    cache[runningX][runningY] = min(pressA, pressB)
-
-    if cache[runningX][runningY] != -1:
-        cache[runningX][runningY] += 1
-
-    return cache[runningX][runningY]
-
-
+def try_solution(game):
+    (aX, aY), (bX,bY), (prizeX, prizeY) = game
+    aCount = 0
+    bCount = 0
+    while aCount < 100:
+        bCount = (prizeX - prizeY - aCount*(aX-aY)) // (bX-bY)
+        curX = aCount * aX + bCount * bX
+        curY = aCount * aY + bCount * bY
+        if curX == prizeX and curY == prizeY:
+            return aCount, bCount
+        aCount += 1
+    return -1, -1
 def solve_part_one(input):
     games = parse_input(input)
     result = 0
     for game in games:
-        _, _, (prizeX, prizeY) = game
-        cache = [[float('inf')] * (prizeY+1)] * (prizeX+1)
-        backtrack(game, 0, 0, cache, 0)
-        result += cache[prizeX][prizeY]
+        aCount, bCount = try_solution(game)
+
+        if aCount >= 0 and bCount >= 0:
+            #print(aCount, bCount)
+            result += aCount * 3 + bCount
+        
     return result
 
 def solve_part_two(input):
