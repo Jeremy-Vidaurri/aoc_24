@@ -1,4 +1,6 @@
 # Advent of Code 2024 - Day 15
+from copy import deepcopy
+
 def parse_input(input):
     grid = []
     moves = []
@@ -127,19 +129,40 @@ def can_push_boxes_2(grid, deltaRow, deltaCol, row, col):
             #print(row)
             return True, row, cols_to_check
 
-def move_multiple_boxes(grid, columns, starting_row, ending_row):
+def move_multiple_boxes(grid, starting_row, ending_row, startingCol):
     #print(starting_row, ending_row)
     if ending_row > starting_row:
-        delta = -1
-    else:
         delta = 1
-    for row in range(ending_row, starting_row + delta, delta):
-        for col in columns:
-           # print(grid[row][col], row, col)
+    else:
+        delta = -1
+
+    tmp_grid = deepcopy(grid)
+
+    columns = set()
+    columns.add(startingCol)
+    if grid[starting_row][startingCol] =='[':
+        columns.add(startingCol + 1)
+    elif grid[starting_row][startingCol] ==']':
+        columns.add(startingCol - 1)
+    moved = set()
+    for row in range(starting_row, ending_row, delta):
+        tmp = columns.copy()
+        for col in tmp:
+            #print(grid[row][col], row, col)
             if grid[row][col] == '[' or grid[row][col] == ']':
-                grid[row - delta][col] = grid[row][col]
-                grid[row][col] = '.'
- 
+                tmp_grid[row + delta][col] = grid[row][col]
+                #print(tmp_grid[row + delta][col])
+                if (row - delta, col) not in moved:
+                    #print(row, col, delta, starting_row)
+                    tmp_grid[row][col] = '.'
+
+            moved.add((row, col))
+            if grid[row + delta][col] =='[':
+                columns.add(col + 1)
+            elif grid[row + delta][col] ==']':
+                columns.add(col - 1)
+        
+    return deepcopy(tmp_grid)
 
 def simulate_movement_2(grid, move, row, col):
     # Translate the move into useful directions
@@ -147,7 +170,9 @@ def simulate_movement_2(grid, move, row, col):
     newRow = row + deltaRow
     newCol = col + deltaCol
     #print(row, col, newRow, newCol)
-
+    #print(move)
+    # for _row in grid:
+    #     print(''.join(_row))
     if grid[newRow][newCol] == "[" or grid[newRow][newCol] == ']':
         # Box in the way, we need to check if there's a wall behind it
         has_space, emptyRow, columns = can_push_boxes_2(grid, deltaRow, deltaCol, row, col)
@@ -157,9 +182,11 @@ def simulate_movement_2(grid, move, row, col):
                 grid[emptyRow].pop(emptyCol)
                 grid[emptyRow].insert(col, '.')
             else:
-                move_multiple_boxes(grid, columns, newRow, emptyRow)
+                grid = move_multiple_boxes(grid, newRow, emptyRow, col)
                 grid[newRow][col] = '@'
                 grid[row][col] = '.'
+                # for _row in grid:
+                #     print('DEBUG',''.join(_row))
     elif grid[newRow][newCol] == '#':
         # Can't do anything,  there's a wall
         pass
@@ -178,7 +205,7 @@ def solve_part_two(input):
     for move in moves:
         #print(move)
         row, col = find_robot(grid)
-        simulate_movement_2(grid, move, row, col)
+        grid = simulate_movement_2(grid, move, row, col)
     for i in range(len(grid)):
         for j in range(len(grid[0])):
             if grid[i][j] == '[':
