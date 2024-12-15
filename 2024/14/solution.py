@@ -47,7 +47,7 @@ def solve_part_one(input):
     return total
 
 def makeGrid(robots):
-    rob_set = set([(posX, posY) for posX, posY, _, _ in robots])
+    rob_set = set([(posY, posX) for posX, posY, _, _ in robots])
     grid = []
     for i in range(103):
         row = []

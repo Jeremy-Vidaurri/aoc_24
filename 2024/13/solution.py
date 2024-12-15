@@ -33,7 +33,6 @@ def parse_input(input):
 def try_solution(game):
     (aX, aY), (bX,bY), (prizeX, prizeY) = game
     aCount = 0
-    bCount = 0
     while aCount < 100:
         bCount = (prizeX - prizeY - aCount*(aX-aY)) // (bX-bY)
         curX = aCount * aX + bCount * bX
@@ -42,6 +41,8 @@ def try_solution(game):
             return aCount, bCount
         aCount += 1
     return -1, -1
+
+
 def solve_part_one(input):
     games = parse_input(input)
     result = 0
@@ -54,5 +55,33 @@ def solve_part_one(input):
         
     return result
 
+def try_with_start(game, startX):
+    (aX, aY), (bX,bY), (prizeX, prizeY) = game
+    prizeX += 10000000000000
+    prizeY += 10000000000000
+    aCount = startX
+    while aCount - startX < 4:
+        print
+        bCount = (prizeX - prizeY - aCount*(aX-aY)) // (bX-bY)
+        curX = aCount * aX + bCount * bX
+        curY = aCount * aY + bCount * bY
+        if curX == prizeX and curY == prizeY:
+            return aCount, bCount
+        aCount += 1
+    return -1, -1
+
 def solve_part_two(input):
+    games = parse_input(input)
+    result = 0
+    for game in games:
+        (aX, aY), (bX,bY), (prizeX, prizeY) = game
+        left = np.array([[aX, bX], [aY, bY]])
+        right = np.array([prizeX + 10000000000000, prizeY + 10000000000000])
+        solution = np.linalg.solve(left,right)
+
+        aCount, bCount = try_with_start(game, int(solution[0]) - 1)
+        if aCount >= 0 and bCount >= 0:
+            #print(aCount, bCount)
+            result += aCount * 3 + bCount
+    print(result)
     return None
