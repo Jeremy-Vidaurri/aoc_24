@@ -133,8 +133,6 @@ def can_push_boxes_2(grid, deltaRow, deltaCol, row, col):
                 boxes.add((newRow, box[1] + 1))
             
         if len(boxes) == len(tmp):
-            #print(boxes)
-            #print(empty_row)
             return True, empty_row + deltaRow, boxes, -1
 
 
@@ -148,15 +146,8 @@ def move_multiple_boxes(grid, boxes: set, emptyRow, deltaRow):
 
     for box in boxes:
         boxRow, boxCol = box
-
         grid[boxRow + diff * deltaRow][boxCol] = '['
         grid[boxRow + diff * deltaRow][boxCol + 1] = ']'
-
-    # New idea:
-    #   - Keep track of the left side of the boxes that need to be moved (will gather in can_push_boxes)
-    #   - Keep track of the row that the last box will be inserted into
-    #   - Simply copy/paste boxes into the appropriate row
-    #       - Beforehand, replace their positions with . so we don't override afterwards
     return grid
 
 def simulate_movement_2(grid, move, row, col):
@@ -164,11 +155,6 @@ def simulate_movement_2(grid, move, row, col):
     deltaRow, deltaCol = dirs[move]
     newRow = row + deltaRow
     newCol = col + deltaCol
-    #print(row, col, newRow, newCol)
-    # print(move)
-    # for _row in grid:
-    #     print(''.join(_row))
-    #input('')
     if grid[newRow][newCol] == "[" or grid[newRow][newCol] == ']':
         # Box in the way, we need to check if there's a wall behind it
         has_space, emptyRow, boxes, emptyCol = can_push_boxes_2(grid, deltaRow, deltaCol, row, col)
@@ -180,8 +166,6 @@ def simulate_movement_2(grid, move, row, col):
                 grid = move_multiple_boxes(grid, boxes, emptyRow, deltaRow)
                 grid[newRow][col] = '@'
                 grid[row][col] = '.'
-                # for _row in grid:
-                #     print('DEBUG',''.join(_row))
     elif grid[newRow][newCol] == '#':
         # Can't do anything,  there's a wall
         pass
@@ -198,15 +182,11 @@ def solve_part_two(input):
 
     result = 0
     for move in moves:
-        #print(move)
         row, col = find_robot(grid)
         grid = simulate_movement_2(grid, move, row, col)
     for i in range(len(grid)):
         for j in range(len(grid[0])):
             if grid[i][j] == '[':
                 result += i * 100 + j
-    
-    # for row in grid:
-    #     print(''.join(row))
 
     return result
