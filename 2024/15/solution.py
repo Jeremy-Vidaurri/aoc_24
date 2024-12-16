@@ -100,54 +100,64 @@ def can_push_boxes_2(grid, deltaRow, deltaCol, row, col):
         while True:
             col += deltaCol
             if grid[row][col] == '.':
-                return True, row, set([col])
+                return True, row, set(), col
             elif grid[row][col] == '#':
-                return False, row, set([col])
-    cols_to_check = set()
+                return False, row, set(), col
+            
     boxes = set()
+
     if grid[row + deltaRow][col] == '[':
-        cols_to_check.add(col)
-        cols_to_check.add(col + 1)
         boxes.add((row + deltaRow, col))
-    else:
-        cols_to_check.add(col)
-        cols_to_check.add(col - 1)
+    elif grid[row + deltaRow][col] == ']':
         boxes.add((row + deltaRow, col-1))
 
+    empty_row = row + deltaRow
+    
     while True:
-        row += deltaRow
-        good = 0
-        tmp = cols_to_check.copy()
-        for check_column in tmp:
-            if grid[row][check_column] == '#':
-                return False, -1, set()
-            elif grid[row][check_column] =='[':
-                cols_to_check.add(check_column + 1)
-                boxes.add((row + deltaRow, col))
-            elif grid[row][check_column] ==']':
-                cols_to_check.add(check_column - 1)
-                boxes.add((row + deltaRow, col-1))
+        tmp = boxes.copy()
+        for box in tmp:
+            if deltaRow == 1:
+                empty_row = max(empty_row, box[0])
             else:
-                good += 1
-        if good == len(cols_to_check):
-            #print(row)
-            return True, row, cols_to_check
+                empty_row = min(empty_row, box[0])
+            newRow = box[0] + deltaRow
+            
+            if grid[newRow][box[1]] == '#' or grid[newRow][box[1] + 1] == '#':
+                return False, -1, set(), -1
+            
+            if grid[newRow][box[1]] == '[':
+                boxes.add((newRow, box[1]))
+            elif grid[newRow][box[1]] == ']':
+                boxes.add((newRow, box[1] - 1))
+            if grid[newRow][box[1] + 1] == '[':
+                boxes.add((newRow, box[1] + 1))
+            
+        if len(boxes) == len(tmp):
+            #print(boxes)
+            #print(empty_row)
+            return True, empty_row + deltaRow, boxes, -1
+
 
 def move_multiple_boxes(grid, boxes: set, emptyRow, deltaRow):
-    diff = emptyRow - max(box, key=lambda box: box[1]) 
-    print(diff)
+    diff = len(grid)
     for box in boxes:
         boxRow, boxCol = box
         grid[boxRow][boxCol] = '.'
         grid[boxRow][boxCol+1] = '.' # Boxes tracks left side
+        diff = min((emptyRow - boxRow) * deltaRow, diff)
 
+    for box in boxes:
+        boxRow, boxCol = box
+
+        grid[boxRow + diff * deltaRow][boxCol] = '['
+        grid[boxRow + diff * deltaRow][boxCol + 1] = ']'
 
     # New idea:
     #   - Keep track of the left side of the boxes that need to be moved (will gather in can_push_boxes)
     #   - Keep track of the row that the last box will be inserted into
     #   - Simply copy/paste boxes into the appropriate row
     #       - Beforehand, replace their positions with . so we don't override afterwards
-    pass
+    return grid
 
 def simulate_movement_2(grid, move, row, col):
     # Translate the move into useful directions
@@ -155,19 +165,19 @@ def simulate_movement_2(grid, move, row, col):
     newRow = row + deltaRow
     newCol = col + deltaCol
     #print(row, col, newRow, newCol)
-    #print(move)
+    # print(move)
     # for _row in grid:
     #     print(''.join(_row))
+    #input('')
     if grid[newRow][newCol] == "[" or grid[newRow][newCol] == ']':
         # Box in the way, we need to check if there's a wall behind it
-        has_space, emptyRow, columns = can_push_boxes_2(grid, deltaRow, deltaCol, row, col)
+        has_space, emptyRow, boxes, emptyCol = can_push_boxes_2(grid, deltaRow, deltaCol, row, col)
         if has_space:
             if deltaCol != 0:
-                emptyCol = columns.pop()
                 grid[emptyRow].pop(emptyCol)
                 grid[emptyRow].insert(col, '.')
             else:
-                grid = move_multiple_boxes(grid, newRow, emptyRow, col)
+                grid = move_multiple_boxes(grid, boxes, emptyRow, deltaRow)
                 grid[newRow][col] = '@'
                 grid[row][col] = '.'
                 # for _row in grid:
@@ -196,9 +206,7 @@ def solve_part_two(input):
             if grid[i][j] == '[':
                 result += i * 100 + j
     
-    for row in grid:
-        print(''.join(row))
+    # for row in grid:
+    #     print(''.join(row))
 
-    print(result)
-
-    return None
+    return result

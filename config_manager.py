@@ -94,7 +94,7 @@ def update_last_leaderboard_api_call_time() -> None:
 
 def _load():
     with open(CONFIG_FILE, "r") as file:
-        return json._load(file)
+        return json.load(file)
 
 def _to_json(data):
     with open(CONFIG_FILE, "w") as file:
