@@ -1,12 +1,12 @@
 {
-    "last_outbound_api_call_time": "2024-12-15T16:58:23.053246",
+    "last_outbound_api_call_time": "2024-12-16T07:15:30.281218",
     "outbound_api_call_throttle": "10",
     "user_data": {
         "user_agent": "https://github.com/robertbrod/aoc by robbrod93@gmail.com"
     },
     "year": 2024,
-    "day": 15,
-    "part": 2,
+    "day": 16,
+    "part": 1,
     "display_leaderboard": false,
     "private_leaderboard_url": "https://adventofcode.com/2024/leaderboard/private/view/1331446"
 }
