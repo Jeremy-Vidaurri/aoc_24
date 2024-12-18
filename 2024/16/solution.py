@@ -1,4 +1,5 @@
 # Advent of Code 2024 - Day 16
+import heapq
 
 class nodes():
     def __init__(self):
@@ -16,12 +17,16 @@ class node():
         self.minCost = float('inf')
         self.row = row
         self.col = col
+        self.dist_start = 0 
 
     def __hash__(self):
         return hash((self.row, self.col))
 
     def __eq__(self, other):
         return self.row == other.row and self.col == other.col
+    
+    def __lt__(self, other):
+        return self.minCost < other.minCost
 
 def is_intersection(grid, row, col):
     if grid[row + 1][col] == '.' and grid[row][col + 1] == '.' or\
@@ -51,13 +56,11 @@ def grid_to_graph(grid, starting_node):
 
     while len(queue) != 0:
         cur = queue.pop(0)
-        #print(cur.row, cur.col)
         node_set.nodes.add(cur)
         if grid[cur.row][cur.col] == 'E':
             ending_node = cur
 
         for i, (dirRow, dirCol) in enumerate(dirs):
-            #print(cur.neighbors[i])
             if cur.neighbors[i][0]:
                 continue
 
@@ -77,25 +80,28 @@ def grid_to_graph(grid, starting_node):
                 new_node.neighbors[(i + 2) % 4] = [cur,dist]
                 queue.append(new_node)
                 
-    return starting_node, ending_node, node_set
+    return starting_node, ending_node
 
-def find_path(start,grid):
+def find_path(start,seen, grid):
     node_arr = [(start,1)]
+    heapq.heapify(node_arr)
     while node_arr:
-        n, cur_dir = node_arr.pop(0)
-        #print(n.row, n.col, n.minCost, cur_dir)
+        n, cur_dir = heapq.heappop(node_arr)
+        print(n.minCost, n.row, n.col)
         for i, (node_neighbor, dist_neighbor) in enumerate(n.neighbors):
-            if not node_neighbor or (i + 2) % 4 == cur_dir:
-                # Don't go nowhere
+            if not node_neighbor:
                 continue
             if i != cur_dir and dist_neighbor + n.minCost + 1000 < node_neighbor.minCost:
+                seen.nodes.add(node_neighbor)
                 node_neighbor.minCost = dist_neighbor + n.minCost + 1000
-                node_arr.append((node_neighbor,i))
+                heapq.heappush(node_arr, (node_neighbor,i))
             elif dist_neighbor + n.minCost < node_neighbor.minCost:
+                seen.nodes.add(node_neighbor)
                 node_neighbor.minCost = dist_neighbor + n.minCost
-                node_arr.append((node_neighbor,i))
+                heapq.heappush(node_arr, (node_neighbor,i))
 
 def solve_part_one(input):
+    print("Starting part 1")
     _grid = [line.strip() for line in input]
     grid = [[char for char in row] for row in _grid]
     start = None
@@ -104,10 +110,13 @@ def solve_part_one(input):
             if grid[i][j] == 'S':
                 start = node(i,j)
                 break
+    seen = nodes()
     start.minCost = 0
-    start, end, node_set = grid_to_graph(grid, start)
+    start, end = grid_to_graph(grid, start)
     
-    find_path(start, grid)
+    end = find_path(start, seen, grid)
+    print('\n',end.minCost)
+
     # for n in node_set.nodes:
     #     grid[n.row][n.col] = 'O'
     #     if n.neighbors[0][0]:
