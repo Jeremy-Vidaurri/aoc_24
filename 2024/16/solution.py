@@ -80,25 +80,27 @@ def grid_to_graph(grid, starting_node):
                 new_node.neighbors[(i + 2) % 4] = [cur,dist]
                 queue.append(new_node)
                 
-    return starting_node, ending_node
+    return starting_node, ending_node, node_set
 
-def find_path(start,seen, grid):
+def find_path(start, grid):
     node_arr = [(start,1)]
     heapq.heapify(node_arr)
     while node_arr:
         n, cur_dir = heapq.heappop(node_arr)
         print(n.minCost, n.row, n.col)
+        if grid[n.row][n.col] == 'E':
+            end = n
+            continue
         for i, (node_neighbor, dist_neighbor) in enumerate(n.neighbors):
             if not node_neighbor:
                 continue
             if i != cur_dir and dist_neighbor + n.minCost + 1000 < node_neighbor.minCost:
-                seen.nodes.add(node_neighbor)
                 node_neighbor.minCost = dist_neighbor + n.minCost + 1000
                 heapq.heappush(node_arr, (node_neighbor,i))
             elif dist_neighbor + n.minCost < node_neighbor.minCost:
-                seen.nodes.add(node_neighbor)
                 node_neighbor.minCost = dist_neighbor + n.minCost
                 heapq.heappush(node_arr, (node_neighbor,i))
+    return end
 
 def solve_part_one(input):
     print("Starting part 1")
@@ -110,15 +112,16 @@ def solve_part_one(input):
             if grid[i][j] == 'S':
                 start = node(i,j)
                 break
-    seen = nodes()
     start.minCost = 0
-    start, end = grid_to_graph(grid, start)
+    start, end, node_set= grid_to_graph(grid, start)
     
-    end = find_path(start, seen, grid)
+    end = find_path(start, grid)
     print('\n',end.minCost)
 
-    # for n in node_set.nodes:
-    #     grid[n.row][n.col] = 'O'
+    for n in node_set.nodes:
+        if n.minCost == 10046:
+            print(n.row,n.col)
+        grid[n.row][n.col] = 'O'
     #     if n.neighbors[0][0]:
     #         print(n.neighbors[0])
     #         grid[n.row - 1][n.col] = '^'
@@ -128,8 +131,8 @@ def solve_part_one(input):
     #         grid[n.row + 1][n.col] = 'v'
     #     if n.neighbors[3][0]:
     #         grid[n.row][n.col - 1] = '<'
-    # for _row in grid:
-    #     print(''.join(_row))
+    for _row in grid:
+        print(''.join(_row))
 
     print(end.minCost)
 
