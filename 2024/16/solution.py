@@ -3,34 +3,27 @@ import heapq
 import util
 
 def solve(startRow, startCol, grid, endRow, endCol):
-    queue = [(0, startRow,startCol, 0, 1)] #cost, row, col, dir, attempt
+    queue = [(0, startRow,startCol, 0)] #cost, row, col, dir
     heapq.heapify(queue)
     dirs = [(0,1), (1, 0), (0,-1),(-1,0)]
     costs = [[float('inf') for _ in range(len(grid[0]))] for _ in range(len(grid))]    
     costs[startRow][startCol] = 0
+    seen = set()
     while len(queue) != 0:
-        curCost, curRow, curCol, curDir, curAttempt = heapq.heappop(queue)
+        curCost, curRow, curCol, curDir = heapq.heappop(queue)
+        seen.add((curRow, curCol, curDir))
         for newDir, (dirRow, dirCol) in enumerate(dirs):
             newRow = curRow + dirRow 
             newCol = curCol + dirCol
-            if not util.in_bounds_2d(newCol, newRow, len(grid[0]), len(grid)) or grid[newRow][newCol] == '#' or (newDir + 2) % 4 == curDir or curAttempt + 1 == 5:
+            if not util.in_bounds_2d(newCol, newRow, len(grid[0]), len(grid)) or grid[newRow][newCol] == '#' or (newDir + 2) % 4 == curDir or (newRow, newCol, newDir) in seen:
                 continue
-            if newDir != curDir and curCost + 1001 < costs[newRow][newCol]:
-                #print(f'setting {newRow},{newCol} to: {curCost + 1001}')
+
+            if newDir != curDir:
                 costs[newRow][newCol] = min(costs[newRow][newCol], curCost + 1001)
-                heapq.heappush(queue, (curCost + 1001, newRow, newCol, newDir, 0))
-            elif newDir == curDir and curCost + 1 < costs[newRow][newCol]:
-                #print(f'setting {newRow},{newCol} to: {curCost + 1}')
+                heapq.heappush(queue, (curCost + 1001, newRow, newCol, newDir))
+            elif newDir == curDir:
                 costs[newRow][newCol] = min(costs[newRow][newCol], curCost + 1)
-                heapq.heappush(queue, (curCost + 1, newRow, newCol, newDir, 0))
-            elif newDir != curDir:
-                #print(f'setting {newRow},{newCol} to: {curCost + 1}')
-                min(costs[newRow][newCol], curCost + 1001)
-                heapq.heappush(queue, (curCost + 1001, newRow, newCol, newDir, curAttempt + 1))
-            else:
-                #print(f'setting {newRow},{newCol} to: {curCost + 1}')
-                min(costs[newRow][newCol], curCost + 1)
-                heapq.heappush(queue, (curCost + 1, newRow, newCol, newDir, curAttempt + 1))
+                heapq.heappush(queue, (curCost + 1, newRow, newCol, newDir))
 
     return costs[endRow][endCol]
 
