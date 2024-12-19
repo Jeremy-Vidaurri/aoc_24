@@ -64,7 +64,7 @@ def solve_2(startRow, startCol, grid, endRow, endCol, max_score):
             newRow = curRow + dirRow 
             newCol = curCol + dirCol
             
-            if not util.in_bounds_2d(newCol, newRow, len(grid[0]), len(grid)) or grid[newRow][newCol] == '#' or (newDir + 2) % 4 == curDir or (newRow, newCol, newDir) in seen or max_score < curCost:
+            if not util.in_bounds_2d(newCol, newRow, len(grid[0]), len(grid)) or grid[newRow][newCol] == '#' or (newDir + 2) % 4 == curDir or (newRow, newCol, newDir) in seen:
                 continue
 
             if newDir != curDir:
