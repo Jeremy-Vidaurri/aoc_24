@@ -78,7 +78,7 @@ def fetch_input(year: str, day: str) -> str:
     print(f"Attempting to fetch puzzle input...")
     
     try:
-        with open(f"{year}/{day}/input.txt", "r") as file:
+        with open(f"{year}/{day}/{year}_{day}_input.txt", "r") as file:
             return file.read()
     except Exception as error:
         print(f"Failed to fetch puzzle input: {error}")
