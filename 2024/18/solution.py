@@ -93,7 +93,6 @@ def solve_part_two(_input):
     size = 70
     blocks = parse_input_2(_input)
     result = -1
-    #
     for i in range(1024, len(blocks)):
         result = bfs_2(blocks, size, i)
         if result != -1:
