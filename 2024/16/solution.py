@@ -1,5 +1,6 @@
 # Advent of Code 2024 - Day 16
 import heapq
+import util
 
 class nodes():
     def __init__(self):
@@ -102,40 +103,85 @@ def find_path(start, grid):
                 heapq.heappush(node_arr, (node_neighbor,i))
     return end
 
+
+def solve(startRow, startCol, grid, endRow, endCol):
+    queue = [(0, startRow,startCol, 0, 1)] #cost, row, col, dir, attempt
+    heapq.heapify(queue)
+    dirs = [(0,1), (1, 0), (0,-1),(-1,0)]
+    costs = [[float('inf') for _ in range(len(grid[0]))] for _ in range(len(grid))]    
+    costs[startRow][startCol] = 0
+    while len(queue) != 0:
+        curCost, curRow, curCol, curDir, curAttempt = heapq.heappop(queue)
+        for newDir, (dirRow, dirCol) in enumerate(dirs):
+            newRow = curRow + dirRow 
+            newCol = curCol + dirCol
+            if not util.in_bounds_2d(newCol, newRow, len(grid[0]), len(grid)) or grid[newRow][newCol] == '#' or (newDir + 2) % 4 == curDir or curAttempt + 1 == 5:
+                continue
+            if newDir != curDir and curCost + 1001 < costs[newRow][newCol]:
+                #print(f'setting {newRow},{newCol} to: {curCost + 1001}')
+                costs[newRow][newCol] = min(costs[newRow][newCol], curCost + 1001)
+                heapq.heappush(queue, (curCost + 1001, newRow, newCol, newDir, 0))
+            elif newDir == curDir and curCost + 1 < costs[newRow][newCol]:
+                #print(f'setting {newRow},{newCol} to: {curCost + 1}')
+                costs[newRow][newCol] = min(costs[newRow][newCol], curCost + 1)
+                heapq.heappush(queue, (curCost + 1, newRow, newCol, newDir, 0))
+            elif newDir != curDir:
+                #print(f'setting {newRow},{newCol} to: {curCost + 1}')
+                min(costs[newRow][newCol], curCost + 1001)
+                heapq.heappush(queue, (curCost + 1001, newRow, newCol, newDir, curAttempt + 1))
+            else:
+                #print(f'setting {newRow},{newCol} to: {curCost + 1}')
+                min(costs[newRow][newCol], curCost + 1)
+                heapq.heappush(queue, (curCost + 1, newRow, newCol, newDir, curAttempt + 1))
+
+    return costs[endRow][endCol]
+
 def solve_part_one(input):
     print("Starting part 1")
     _grid = [line.strip() for line in input]
     grid = [[char for char in row] for row in _grid]
-    start = None
+    startRow, startCol, endRow, endCol = 0,0,0,0
     for i in range(len(grid)):
         for j in range(len(grid[0])):
             if grid[i][j] == 'S':
-                start = node(i,j)
+                startRow, startCol = i,j
+            if grid[i][j] == 'E':
+                endRow, endCol = i,j
+            
+            if startRow * startCol * endRow * endCol != 0:
                 break
-    start.minCost = 0
-    start, end, node_set= grid_to_graph(grid, start)
+    score = solve(startRow, startCol, grid, endRow, endCol)
+
+    # start = None
+    # for i in range(len(grid)):
+    #     for j in range(len(grid[0])):
+    #         if grid[i][j] == 'S':
+    #             start = node(i,j)
+    #             break
+    # start.minCost = 0
+    # start, end, node_set= grid_to_graph(grid, start)
     
-    end = find_path(start, grid)
-    print('\n',end.minCost)
+    # end = find_path(start, grid)
+    # print('\n',end.minCost)
 
-    for n in node_set.nodes:
-        if n.minCost == 10046:
-            print(n.row,n.col)
-        grid[n.row][n.col] = 'O'
-    #     if n.neighbors[0][0]:
-    #         print(n.neighbors[0])
-    #         grid[n.row - 1][n.col] = '^'
-    #     if n.neighbors[1][0]:
-    #         grid[n.row][n.col+1] = '>'
-    #     if n.neighbors[2][0]:
-    #         grid[n.row + 1][n.col] = 'v'
-    #     if n.neighbors[3][0]:
-    #         grid[n.row][n.col - 1] = '<'
-    for _row in grid:
-        print(''.join(_row))
+    # for n in node_set.nodes:
+    #     if n.minCost == 10046:
+    #         print(n.row,n.col)
+    #     grid[n.row][n.col] = 'O'
+    # #     if n.neighbors[0][0]:
+    # #         print(n.neighbors[0])
+    # #         grid[n.row - 1][n.col] = '^'
+    # #     if n.neighbors[1][0]:
+    # #         grid[n.row][n.col+1] = '>'
+    # #     if n.neighbors[2][0]:
+    # #         grid[n.row + 1][n.col] = 'v'
+    # #     if n.neighbors[3][0]:
+    # #         grid[n.row][n.col - 1] = '<'
+    # for _row in grid:
+    #     print(''.join(_row))
 
-    print(end.minCost)
-
+    # print(end.minCost)
+    print(score)
 
     return None
 

@@ -123,7 +123,7 @@ def in_bounds_2d(x: int, y: int, width: int, height: int) -> bool:
         None
     """
     
-    print(f"Checking if coord is in bounds x: {x}, y: {y}, width: {width}, height: {height}")
+    #print(f"Checking if coord is in bounds x: {x}, y: {y}, width: {width}, height: {height}")
 
     return 0 <= x < width and 0 <= y < height
 
