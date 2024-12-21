@@ -95,14 +95,14 @@ def get_steps_map(start, current_steps, grid):
     return total_steps, step_map
 
 def try_cheat_2(cur_steps, step_map, total_steps):
-    result = 0
+    cheats = []
     curRow, curCol = step_map[cur_steps]
-    for i in range(cur_steps + 102, total_steps):
+    for i in range(cur_steps + 100, total_steps+1):
         checkRow, checkCol = step_map[i]
-        isReachable = abs(checkRow - curRow) + abs(checkCol - curCol) <= 20
-        if isReachable:
-            result += 1
-    return result
+        diff = abs(checkRow - curRow) + abs(checkCol - curCol)
+        if diff <= 20:
+            cheats.append(i - (cur_steps + diff))
+    return cheats
 
 def solve_part_two(input):
     _grid = [line.strip() for line in input]
@@ -113,11 +113,15 @@ def solve_part_two(input):
         for col in range(len(grid[0])):
             if grid[row][col] == 'S':
                 start = (row,col)
-
+    cheats = []
     total_steps, step_map = get_steps_map(start, current_steps, grid)
     #print(step_map)
     result = 0
     for i in range(total_steps - 101):
-        result += try_cheat_2(i, step_map, total_steps)
+        cheats.extend(try_cheat_2(i, step_map, total_steps))
+
+    for val in cheats:
+        if val >= 100:
+            result += 1
     print(result)
     return None
