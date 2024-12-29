@@ -69,10 +69,16 @@ def solve_part_one(input):
         if recursive_solve(design, pattern_trie):
             #print(design)
             result += 1
-
-    print(result)
-
-    return None
+    return result
 
 def solve_part_two(input):
+    patterns, designs = parse_input(input)
+    pattern_trie = make_trie(patterns)
+    result = 0
+    for design in designs:
+        #result += recursive_solve_2(design, pattern_trie)
+        
+        print(design, result)
+            
+    print(result)
     return None

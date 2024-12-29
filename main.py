@@ -34,7 +34,7 @@ def run_solution():
     except ModuleNotFoundError:
         print(f"Solution for {year} day {day} not found")
     
-    input_data = util.fetch_input(year, day).splitlines()
+    input_data = util.fetch_sample_input(year, day).splitlines()
     
     if part == 1:
         start_time = time.perf_counter()
