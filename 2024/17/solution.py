@@ -1,6 +1,6 @@
 # Advent of Code 2024 - Day 17
 import re
-import copy
+from copy import deepcopy
 def parse_input(input):
     regs = []
     program = []
@@ -69,33 +69,25 @@ def solve_part_one(_input):
     return result
 
 
-def recursion(cur_num, digit_place, program, regs, _program):
-    print(cur_num, digit_place)
-    if digit_place == -1:
-        if cur_num == int(','.join([str(n) for n in program])):
-            return cur_num
-        else:
-            return -1
-        
-
-    for i in range(cur_num, cur_num+8**(digit_place+1), 8**(digit_place-1)):
-        print(i)
-        index = 0
-        output = []
-        tmp = copy.deepcopy(regs)
-        tmp[0] = i
-        while index < len(program):
-            opcode, literal = program[index]
-            output, index, regs = run_operation(opcode, literal, index, tmp, output) 
-        if _program[digit_place-1:] == output[digit_place-1:]:
-            print(output, cur_num)
-            check = cur_num + recursion(cur_num + i, digit_place - 1, program, regs, _program)
-    
-    return -1
-
-
 def solve_part_two(_input):
-    regs, _program = parse_input(_input)    
-    program = fix_program(_program)
-    print(recursion(0o1000000000000000,16,program, regs,_program))
+    try:
+        regs, _program = parse_input(_input)    
+        program = fix_program(_program)
+        for i in range(10, 20):
+            regA = 8**i + 8**(i-8)
+            tmp = deepcopy(regs)
+            index = 0
+            output = []
+            tmp[0] = regA
+            while index < len(program):
+                opcode, literal = program[index]
+                output, index, tmp = run_operation(opcode, literal, index, tmp, output) 
+            result = ','.join([str(n) for n in output]) 
+            print(i, result)
+            if (result[:-1] == '0'):
+                print(i, result)
+                if result == '2,4,1,5,7,5,1,6,4,1,5,5,0,3,3,0':
+                    break
+    except Exception as e:
+        print(i,e)
     return None

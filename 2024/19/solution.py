@@ -1,4 +1,5 @@
 # Advent of Code 2024 - Day 19
+import functools
 
 class TrieNode():
     def __init__(self):
@@ -71,12 +72,28 @@ def solve_part_one(input):
             result += 1
     return result
 
+@functools.cache
+def recursive_solve_2(design, pattern_trie:Trie):
+    if len(design) == 0:
+        return 1
+    
+    result = 0
+   #print(design)
+    start_idx = 0
+    end_idx = start_idx + 1
+    while end_idx <= len(design):
+        if pattern_trie.find_pattern(design[start_idx:end_idx]):
+            result += recursive_solve_2(design[end_idx:], pattern_trie)
+        end_idx += 1
+    #print(design)
+    return result
+
 def solve_part_two(input):
     patterns, designs = parse_input(input)
     pattern_trie = make_trie(patterns)
     result = 0
     for design in designs:
-        #result += recursive_solve_2(design, pattern_trie)
+        result += recursive_solve_2(design, pattern_trie)
         
         print(design, result)
             
